@@ -1,5 +1,6 @@
 package com.spares.customer.controller;
 
+import com.spares.customer.entity.OrderDetailEntity;
 import com.spares.customer.entity.RatingEntity;
 import com.spares.customer.repository.RatingRepository;
 import org.apache.tomcat.util.http.parser.Authorization;
@@ -77,5 +78,16 @@ public class CustomerController {
 	public List<RatingEntity > getAllRating(){
 		return ratingRepository.findAll();
 	}
+
+	@GetMapping("/customer/updatestatus/{orderdetailid}")
+	@ResponseBody
+	public OrderDetailEntity saverating(@PathVariable int orderdetailid, @RequestHeader String Authorization){
+		OrderDetailEntity orderDetail=new OrderDetailEntity();
+		orderDetail.setOrderdetailId(orderdetailid);
+		orderDetail.setOrderDetailStatus("Dispached");
+		return orderDetailRepository.save(orderDetail);
+	}
+
+
 
 }
