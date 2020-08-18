@@ -8,6 +8,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -23,24 +24,22 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter{
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 		auth.userDetailsService(myUserDetailsService);
 	}
-	
-	
+
+
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.csrf().disable();
 		http.cors().disable();
-
 		http.authorizeRequests()
-		.antMatchers("/**").permitAll()
-        .antMatchers("/**/customer/*").hasAnyRole("Customer")
-				.anyRequest().authenticated()
-        .and().formLogin().and().logout().permitAll();
-
+				.antMatchers(HttpMethod.GET).permitAll()
+				.antMatchers("/customer/*").hasRole("Customer")
+				.anyRequest().authenticated().and().formLogin();
 		http.httpBasic();
+
 	}
 
 	@Bean
-    public PasswordEncoder getPasswordEncoder() {
-        return NoOpPasswordEncoder.getInstance();
-    }
+	public PasswordEncoder getPasswordEncoder() {
+		return new BCryptPasswordEncoder();
+	}
 }

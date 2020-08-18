@@ -13,9 +13,9 @@ public class OrderEntity {
 	@GeneratedValue(strategy= GenerationType.AUTO)
 	private Integer orderId;
 	@Column(name="order_totalamount")
-	private String ordertotaltmount;
+	private Integer ordertotaltmount;
     @Column(name="user_id")
-	private String userid;
+	private Integer userid;
 
     @Column(name="order_creation_time")
     @UpdateTimestamp
@@ -26,7 +26,7 @@ public class OrderEntity {
     @JoinColumn(name="order_id")
 	private List<OrderDetailEntity> orderDetailEntityList;
 
-	public OrderEntity(Integer orderId, String ordertotaltmount, List<OrderDetailEntity> orderDetailEntityList, String userid, String productDealername, LocalDateTime ordercreationtime) {
+	public OrderEntity(Integer orderId, Integer ordertotaltmount, List<OrderDetailEntity> orderDetailEntityList, Integer userid, String productDealername, LocalDateTime ordercreationtime) {
 		this.orderId = orderId;
 		this.ordertotaltmount = ordertotaltmount;
 		this.orderDetailEntityList = orderDetailEntityList;
@@ -45,11 +45,11 @@ public class OrderEntity {
 		this.orderId = orderId;
 	}
 
-	public String getOrdertotaltmount() {
+	public Integer getOrdertotaltmount() {
 		return ordertotaltmount;
 	}
 
-	public void setOrdertotaltmount(String ordertotaltmount) {
+	public void setOrdertotaltmount(Integer ordertotaltmount) {
 		this.ordertotaltmount = ordertotaltmount;
 	}
 
@@ -61,11 +61,11 @@ public class OrderEntity {
 		this.orderDetailEntityList = orderDetailEntityList;
 	}
 
-	public String getUserid() {
+	public Integer getUserid() {
 		return userid;
 	}
 
-	public void setUserid(String userid) {
+	public void setUserid(Integer userid) {
 		this.userid = userid;
 	}
 

@@ -13,31 +13,34 @@ public class OrderDetailEntity {
 	@GeneratedValue(strategy= GenerationType.AUTO)
 	private Integer orderdetailId;
     @Column(name="order_id")
-	private Integer orderid;
+	private Integer orderID;
     @Column(name="product_id")
-	private Integer productId;
+	private Integer productID;
     @Column(name="orderdetail_quantity")
-	private String orderdetailquantity;
+	private Integer orderDetailQuantity;
     @Column(name="orderdetail_status")
 	private String orderDetailStatus;
     @Column(name="user_id")
-	private String userid;
-
+	private Integer userID;
+    @Column(name="dealer_id")
+	private Integer dealerID;
     @Column(name="order_creation_time")
     @UpdateTimestamp
 	private LocalDateTime orderDetailcreationtime;
 
-	public OrderDetailEntity(Integer orderdetailId, Integer orderid, Integer productId, String orderdetailquantity, String orderDetailStatus, String userid, LocalDateTime orderDetailcreationtime) {
-		this.orderdetailId = orderdetailId;
-		this.orderid = orderid;
-		this.productId = productId;
-		this.orderdetailquantity = orderdetailquantity;
-		this.orderDetailStatus = orderDetailStatus;
-		this.userid = userid;
-		this.orderDetailcreationtime = orderDetailcreationtime;
-	}
 	public OrderDetailEntity() {
 		super();
+	}
+
+	public OrderDetailEntity(Integer orderdetailId, Integer orderID, Integer productID, Integer orderDetailQuantity, String orderDetailStatus, Integer userID, Integer dealerID, LocalDateTime orderDetailcreationtime) {
+		this.orderdetailId = orderdetailId;
+		this.orderID = orderID;
+		this.productID = productID;
+		this.orderDetailQuantity = orderDetailQuantity;
+		this.orderDetailStatus = orderDetailStatus;
+		this.userID = userID;
+		this.dealerID = dealerID;
+		this.orderDetailcreationtime = orderDetailcreationtime;
 	}
 
 	public Integer getOrderdetailId() {
@@ -48,28 +51,28 @@ public class OrderDetailEntity {
 		this.orderdetailId = orderdetailId;
 	}
 
-	public Integer getOrderid() {
-		return orderid;
+	public Integer getOrderID() {
+		return orderID;
 	}
 
-	public void setOrderid(Integer orderid) {
-		this.orderid = orderid;
+	public void setOrderID(Integer orderID) {
+		this.orderID = orderID;
 	}
 
 	public Integer getProductID() {
-		return productId;
+		return productID;
 	}
 
-	public void setProductID(Integer productId) {
-		this.productId = productId;
+	public void setProductID(Integer productID) {
+		this.productID = productID;
 	}
 
-	public String getOrderdetailquantity() {
-		return orderdetailquantity;
+	public Integer getOrderDetailQuantity() {
+		return orderDetailQuantity;
 	}
 
-	public void setOrderdetailquantity(String orderdetailquantity) {
-		this.orderdetailquantity = orderdetailquantity;
+	public void setOrderDetailQuantity(Integer orderDetailQuantity) {
+		this.orderDetailQuantity = orderDetailQuantity;
 	}
 
 	public String getOrderDetailStatus() {
@@ -80,12 +83,20 @@ public class OrderDetailEntity {
 		this.orderDetailStatus = orderDetailStatus;
 	}
 
-	public String getUserid() {
-		return userid;
+	public Integer getUserID() {
+		return userID;
 	}
 
-	public void setUserid(String userid) {
-		this.userid = userid;
+	public void setUserID(Integer userID) {
+		this.userID = userID;
+	}
+
+	public Integer getDealerID() {
+		return dealerID;
+	}
+
+	public void setDealerID(Integer dealerID) {
+		this.dealerID = dealerID;
 	}
 
 	public LocalDateTime getOrderDetailcreationtime() {

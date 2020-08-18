@@ -9,27 +9,27 @@ import javax.persistence.Id;
 import java.time.LocalDateTime;
 
 @Entity(name = "product")
-public class productEntity {
+public class ProductEntity {
 
 	@Id
-	@GeneratedValue(strategy= GenerationType.AUTO)
+	@GeneratedValue(strategy= GenerationType.SEQUENCE)
 	private Integer productId;
 	private String productName;
 	private String productDescription;
-	private String productAmount;
-	private String productDealername;
+	private Integer productAmount;
 	@UpdateTimestamp
 	private LocalDateTime productcreationtime;
+	private Integer productUserID;
 
-	public productEntity(Integer productId, String productName, String productDescription, String productAmount, String productDealername, LocalDateTime productcreationtime) {
+	public ProductEntity(Integer productId, String productName, String productDescription, Integer productAmount, Integer productUserID, LocalDateTime productcreationtime) {
 		this.productId = productId;
 		this.productName = productName;
 		this.productDescription = productDescription;
 		this.productAmount = productAmount;
-		this.productDealername = productDealername;
+		this.productUserID = productUserID;
 		this.productcreationtime=productcreationtime;
 	}
-	public productEntity() {
+	public ProductEntity() {
 		super();
 	}
 
@@ -65,20 +65,20 @@ public class productEntity {
 		this.productDescription = productDescription;
 	}
 
-	public String getProductAmount() {
+	public Integer getProductAmount() {
 		return productAmount;
 	}
 
-	public void setProductAmount(String productAmount) {
+	public void setProductAmount(Integer productAmount) {
 		this.productAmount = productAmount;
 	}
 
-	public String getProductDealername() {
-		return productDealername;
+	public Integer getProductUserID() {
+		return productUserID;
 	}
 
-	public void setProductDealername(String productDealername) {
-		this.productDealername = productDealername;
+	public void setProductUserID(Integer productUserID) {
+		this.productUserID = productUserID;
 	}
 
 

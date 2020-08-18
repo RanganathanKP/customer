@@ -38,7 +38,7 @@ public class UserEntity {
 		this.active = active;
 	}
 	public UserEntity(Integer userId, String userName, String companyName, String contactNumber, String address,
-                      String state, String country, String dateOfBirth, String userRole, String emailAddress, String password) {
+			String state, String country, String dateOfBirth, String userRole, String emailAddress, String password) {
 		super();
 		this.userId = userId;
 		this.userName = userName;

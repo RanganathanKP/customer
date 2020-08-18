@@ -1,93 +1,93 @@
 package com.spares.customer.controller;
 
+import com.netflix.discovery.converters.Auto;
+import com.spares.customer.DTO.PurchaseOrderDTO;
+import com.spares.customer.DTO.RatingDTO;
+import com.spares.customer.DealerServiceProxy;
 import com.spares.customer.entity.OrderDetailEntity;
+import com.spares.customer.entity.ProductEntity;
 import com.spares.customer.entity.RatingEntity;
-import com.spares.customer.repository.RatingRepository;
-import org.apache.tomcat.util.http.parser.Authorization;
+import com.spares.customer.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.spares.customer.entity.OrderEntity;
-import com.spares.customer.repository.OrderDetailRepository;
-import com.spares.customer.repository.OrderRepository;
-import com.spares.customer.repository.UserRepository;
-import com.spares.customer.service.MyUserDetailsService;
 
 import java.util.List;
 
-
+@RequestMapping("/customer")
 @RestController
 public class CustomerController {
 
 	@Autowired
-	private UserRepository userRepo;
-
-	@Autowired
-	private OrderDetailRepository orderDetailRepository;
-	@Autowired
-	private OrderRepository orderRepository;
-	
-	@Autowired
-	private MyUserDetailsService myuserDetailsService;
-
-	@Autowired
-	private RatingRepository ratingRepository;
+	private CustomerService customerService;
 
 
-
-
-
-//	product service must be called to get the data
-////	@GetMapping("/customer/viewAllProduct")
-////	@ResponseBody
-////	public List<productEntity> findAllProduct(){
-////		return productRepository.findAll();
-////	}
-
-
-	@PostMapping("/customer/createorder")
+	@GetMapping("/viewAllProducts")
 	@ResponseBody
-	public OrderEntity saveproduct(@RequestBody OrderEntity order, @RequestHeader String Authorization){
-		order.getOrderDetailEntityList().stream().forEach(orderdetail->{
-			orderdetail.setOrderDetailStatus("Placed");
-		});
-		return orderRepository.save(order);
-	}
-	@GetMapping("/customer/getorder/{orderid}")
-	@ResponseBody
-	public OrderEntity getOrderByOrderID(@PathVariable int orderid ){
-		return orderRepository.findById(orderid).get();
+	public ResponseEntity<List<ProductEntity>> viewAllProduct(){
+		System.out.println("inside view product");
+			List<ProductEntity> productResponse= customerService.viewAllProduct();
+			return new ResponseEntity<>(productResponse, HttpStatus.OK);
 	}
 
-	@PostMapping("/customer/rateorder")
+	@PostMapping("/createorder")
 	@ResponseBody
-	public RatingEntity saverating(@RequestBody RatingEntity rating, @RequestHeader String Authorization){
-
-		return ratingRepository.save(rating);
+	public ResponseEntity<OrderEntity> saveproduct(@RequestBody List<PurchaseOrderDTO> purchaseOrder, @RequestHeader String Authorization){
+		System.out.println("inside createorder");
+		OrderEntity createdOrder= customerService.createorder(purchaseOrder,Authorization);
+		return new ResponseEntity<>(createdOrder, HttpStatus.OK);
 	}
 
-	@GetMapping("/customer/getrating/{productid}")
+	@GetMapping("/getorder/{orderid}")
 	@ResponseBody
-	public RatingEntity getRatingByProductID(@PathVariable int productid ){
-		return ratingRepository.findById(productid).get();
+	public ResponseEntity<OrderEntity> getOrderByOrderID(@PathVariable int orderid,@RequestHeader String Authorization ){
+		OrderEntity responseOrder= customerService.viewOrder(orderid,Authorization);
+		return new ResponseEntity<>(responseOrder, HttpStatus.OK);
 	}
 
-	@GetMapping("/customer/allRating")
+	@PostMapping("/rateorder")
 	@ResponseBody
-	public List<RatingEntity > getAllRating(){
-		return ratingRepository.findAll();
+	public ResponseEntity<List<RatingEntity>> saveRating(@RequestBody List<RatingDTO> rating, @RequestHeader String Authorization){
+		List<RatingEntity> response= customerService.saveRating(rating,Authorization);
+		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
-	@GetMapping("/customer/updatestatus/{orderdetailid}")
+	@GetMapping("/getrating/{productid}")
 	@ResponseBody
-	public OrderDetailEntity saverating(@PathVariable int orderdetailid, @RequestHeader String Authorization){
-		OrderDetailEntity orderDetail=new OrderDetailEntity();
-		orderDetail.setOrderdetailId(orderdetailid);
-		orderDetail.setOrderDetailStatus("Dispached");
-		return orderDetailRepository.save(orderDetail);
+	public  ResponseEntity<RatingDTO> getRatingByProductID(@PathVariable int productid ){
+		RatingDTO response= customerService.viewRating(productid);
+		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
+	@GetMapping("/allRating")
+	@ResponseBody
+	public ResponseEntity<List<RatingDTO >> getAllRating(){
+		List<RatingDTO> response= customerService.viewallRating();
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
 
+	@GetMapping("/updatestatus/{orderdetailid}")
+	@ResponseBody
+	public  ResponseEntity<OrderDetailEntity>updateOrderStatus(@PathVariable Integer orderdetailid, @RequestHeader String Authorization){
+		OrderDetailEntity response= customerService.updateOrderStatus(orderdetailid,Authorization);
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+
+	@GetMapping("/getDealerOrder")
+	@ResponseBody
+	public  ResponseEntity<List<OrderDetailEntity>>getDealerOrder(@RequestHeader String Authorization){
+		List<OrderDetailEntity >response= customerService.dealerAllOrder(Authorization);
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+
+	@GetMapping("/getDealerPlacedOrder")
+	@ResponseBody
+	public  ResponseEntity<List<OrderDetailEntity>>getDealerPlacedOrder(@RequestHeader String Authorization){
+		List<OrderDetailEntity> response= customerService.dealerPlacedOrder(Authorization);
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
 
 }

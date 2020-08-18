@@ -11,11 +11,11 @@ public class RatingEntity {
 	@Column(name="productid")
 	private Integer productid;
 	@Column(name="userid")
-	private String userid;
+	private Integer userid;
 	@Column(name="rating")
 	private Integer rating;
 
-	public RatingEntity(Integer ratingId, Integer productid, String userid, Integer rating) {
+	public RatingEntity(Integer ratingId, Integer productid, Integer userid, Integer rating) {
 		this.ratingId = ratingId;
 		this.productid = productid;
 		this.userid = userid;
@@ -41,11 +41,11 @@ public class RatingEntity {
 		this.productid = productid;
 	}
 
-	public String getUserid() {
+	public Integer getUserid() {
 		return userid;
 	}
 
-	public void setUserid(String userid) {
+	public void setUserid(Integer userid) {
 		this.userid = userid;
 	}
 
