@@ -14,9 +14,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @ControllerAdvice
 public class ControllerAdvisor extends ResponseEntityExceptionHandler {
 
-
-
-
     @ExceptionHandler(CustomerException.class)
     public ResponseEntity<Object> handleUserNotFoundException(
             CustomerException ex, WebRequest request) {

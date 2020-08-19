@@ -14,11 +14,11 @@ import java.util.List;
 @FeignClient(name="dealer-client",url = "localhost:8083",fallback = CustomerFallBack.class)
 public interface DealerServiceProxy {
 
-    @GetMapping("/dealer/findAllProduct")
+    @GetMapping("/sparedealer/dealer/findAllProduct")
     @ResponseBody
     public List<ProductEntity> findAllProduct();
 
-    @GetMapping("/dealer/findProduct/{productid}")
+    @GetMapping("/sparedealer/dealer/findProduct/{productid}")
     @ResponseBody
     public ResponseEntity<ProductEntity> findProductByID(@PathVariable Integer productid);
 

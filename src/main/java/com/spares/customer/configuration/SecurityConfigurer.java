@@ -32,7 +32,6 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter{
 		http.csrf().disable();
 		http.cors().disable();
 		http.authorizeRequests()
-				.antMatchers(HttpMethod.GET).permitAll()
 				.antMatchers("/customer/*").hasRole("Customer")
 				.anyRequest().authenticated().and().formLogin();
 		http.httpBasic();
@@ -41,7 +40,7 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter{
 
 	@Override
 	public void configure(WebSecurity web) throws Exception {
-		web.ignoring().antMatchers("/customer/saveUser");
+		web.ignoring().antMatchers("/customer/saveUser").antMatchers(HttpMethod.GET);
 	}
 
 	@Bean

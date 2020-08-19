@@ -40,15 +40,14 @@ public class CustomerService {
     private OrderDetailRepository orderDetailRepository;
 
 
-
     public List<ProductEntity> viewAllProduct(Integer userID) {
-        List<ProductEntity> responseList=dealerServiceProxy.findAllProduct();
-        if(CollectionUtils.isEmpty(responseList)||!Optional.ofNullable(responseList).isPresent()){
+        List<ProductEntity> responseList = dealerServiceProxy.findAllProduct();
+        if (CollectionUtils.isEmpty(responseList) || !Optional.ofNullable(responseList).isPresent()) {
             throw new CustomerException("Product not found");
-        }else{
-            if(Optional.ofNullable(userID).isPresent()) {
+        } else {
+            if (Optional.ofNullable(userID).isPresent()) {
                 responseList = responseList.stream().filter(product -> product.getProductUserID() == userID).collect(Collectors.toList());
-                if(CollectionUtils.isEmpty(responseList)){
+                if (CollectionUtils.isEmpty(responseList)) {
                     throw new CustomerException("No product for this user");
                 }
             }
@@ -56,18 +55,18 @@ public class CustomerService {
         return responseList;
     }
 
-    public  OrderEntity createorder(List<PurchaseOrderDTO> purchaseOrder, String auth) {
-        OrderEntity order= new OrderEntity();
-        UserEntity user=getLoginedInUser(auth);
-        List<Integer> amounts= new ArrayList<>();
-        List<OrderDetailEntity> orderDetails=new ArrayList<>();
-        purchaseOrder.forEach(purchase->{
-            ResponseEntity<ProductEntity> productDetail=dealerServiceProxy.findProductByID(purchase.getProductid());
-            if(!(Optional.ofNullable(productDetail.getBody()).isPresent()&&Optional.ofNullable(productDetail.getBody().getProductId()).isPresent())){
-                throw new CustomerException("Invalid Product ID "+purchase.getProductid().toString());
+    public OrderEntity createorder(List<PurchaseOrderDTO> purchaseOrder, String auth) {
+        OrderEntity order = new OrderEntity();
+        UserEntity user = getLoginedInUser(auth);
+        List<Integer> amounts = new ArrayList<>();
+        List<OrderDetailEntity> orderDetails = new ArrayList<>();
+        purchaseOrder.forEach(purchase -> {
+            ResponseEntity<ProductEntity> productDetail = dealerServiceProxy.findProductByID(purchase.getProductid());
+            if (!(Optional.ofNullable(productDetail.getBody()).isPresent() && Optional.ofNullable(productDetail.getBody().getProductId()).isPresent())) {
+                throw new CustomerException("Invalid Product ID " + purchase.getProductid().toString());
             }
-            amounts.add((productDetail.getBody().getProductAmount()*purchase.getQuantity()));
-            OrderDetailEntity orderDetail= new OrderDetailEntity();
+            amounts.add((productDetail.getBody().getProductAmount() * purchase.getQuantity()));
+            OrderDetailEntity orderDetail = new OrderDetailEntity();
             orderDetail.setProductID(purchase.getProductid());
             orderDetail.setDealerID(productDetail.getBody().getProductUserID());
             orderDetail.setOrderDetailQuantity(purchase.getQuantity());
@@ -82,12 +81,12 @@ public class CustomerService {
         return orderRepository.save(order);
     }
 
-    public List<RatingEntity> saveRating(List<RatingDTO> ratingDTO,String auth){
-        UserEntity user=getLoginedInUser(auth);
-        List<RatingEntity> ratingEntity= new ArrayList();
-        ratingDTO.forEach(rating->{
+    public List<RatingEntity> saveRating(List<RatingDTO> ratingDTO, String auth) {
+        UserEntity user = getLoginedInUser(auth);
+        List<RatingEntity> ratingEntity = new ArrayList();
+        ratingDTO.forEach(rating -> {
             validateProduct(rating);
-            RatingEntity ratingToSave= new RatingEntity();
+            RatingEntity ratingToSave = new RatingEntity();
             ratingToSave.setProductid(rating.getProductID());
             ratingToSave.setRating(Math.round(rating.getRating()));
             ratingToSave.setUserid(user.getUserId());
@@ -96,81 +95,61 @@ public class CustomerService {
         return ratingRepository.saveAll(ratingEntity);
     }
 
-    public OrderEntity viewOrder(Integer orderID,String auth){
-        UserEntity user=getLoginedInUser(auth);
-        Optional<OrderEntity> responseorder= orderRepository.findById(orderID);
-        if(responseorder.isPresent()){
-             OrderEntity order=responseorder.get();
-             if(order.getUserid()==user.getUserId()||!user.getUserRole().equalsIgnoreCase("Customer")){
-                 return order;
-             }else{
-                 throw new CustomerException("Order does not belong to user.");
-             }
-        }else{
+    public OrderEntity viewOrder(Integer orderID, String auth) {
+        UserEntity user = getLoginedInUser(auth);
+        Optional<OrderEntity> responseorder = orderRepository.findById(orderID);
+        if (responseorder.isPresent()) {
+            OrderEntity order = responseorder.get();
+            if (order.getUserid() == user.getUserId() || !user.getUserRole().equalsIgnoreCase("Customer")) {
+                return order;
+            } else {
+                throw new CustomerException("Order does not belong to user.");
+            }
+        } else {
             throw new CustomerException("Please Enter Valid Order ID.");
         }
     }
 
 
-
     private void validateProduct(RatingDTO rating) {
-        ResponseEntity<ProductEntity> productDetail= dealerServiceProxy.findProductByID(rating.getProductID());
-        if(!(Optional.ofNullable(productDetail.getBody()).isPresent()&&Optional.ofNullable(productDetail.getBody().getProductId()).isPresent())){
-                 throw new CustomerException("Please Enter Valid Product ID:"+rating.getProductID().toString());
-              }
-        if(rating.getRating()>10||rating.getRating()<0){
+        ResponseEntity<ProductEntity> productDetail = dealerServiceProxy.findProductByID(rating.getProductID());
+        if (!(Optional.ofNullable(productDetail.getBody()).isPresent() && Optional.ofNullable(productDetail.getBody().getProductId()).isPresent())) {
+            throw new CustomerException("Please Enter Valid Product ID:" + rating.getProductID().toString());
+        }
+        if (rating.getRating() > 10 || rating.getRating() < 0) {
             throw new CustomerException("Enter rating between 1-10.");
         }
     }
 
-//    public RatingDTO viewRating(Integer productid){
-//        RatingDTO response=new RatingDTO();
-//        float overallRating=0.0f;
-//        List<Integer> ratingList= new ArrayList<>();
-//       List<RatingEntity> ratings=ratingRepository.findByProductid(productid);
-//       if(CollectionUtils.isEmpty(ratings)){
-//           throw new CustomerException("Please Enter valid Product ID.");
-//       }
-//       ratings.forEach(rating->{
-//           ratingList.add(rating.getRating());
-//       });
-//            overallRating=((float)(ratingList.stream().reduce(0, (a, b) -> a + b)))/(float)ratingList.size();
-//            response.setProductID(productid);
-//            response.setRating(overallRating);
-//        return response;
-//    }
-
-    public OrderDetailEntity getorderdetail(Integer orderDetailID){
+    public OrderDetailEntity getorderdetail(Integer orderDetailID) {
         return orderDetailRepository.findById(orderDetailID).get();
     }
 
-
-
-    public List<RatingDTO> viewallRating(){
-        List<RatingDTO> raitngDTOs= new ArrayList<>();
-        List<RatingEntity> ratings=ratingRepository.findAll();
+    public List<RatingDTO> viewallRating() {
+        List<RatingDTO> raitngDTOs = new ArrayList<>();
+        List<RatingEntity> ratings = ratingRepository.findAll();
         Map<Integer, List<RatingEntity>> ratingMap = ratings.stream()
                 .collect(groupingBy(RatingEntity::getProductid));
-        ratingMap.entrySet().stream().forEach(set->{
-            float overallRating=0.0f;
+        ratingMap.entrySet().stream().forEach(set -> {
+            float overallRating = 0.0f;
             RatingDTO ratingDTO = new RatingDTO();
             ratingDTO.setProductID(set.getKey());
-            overallRating=((float)(set.getValue().stream().map(RatingEntity::getRating).collect(Collectors.toList()).stream().reduce(0, (a, b) -> a + b)))/(float)set.getValue().size();
+            overallRating = ((float) (set.getValue().stream().map(RatingEntity::getRating).collect(Collectors.toList()).stream().reduce(0, (a, b) -> a + b))) / (float) set.getValue().size();
             ratingDTO.setRating(overallRating);
             raitngDTOs.add(ratingDTO);
         });
-       return raitngDTOs;
+        return raitngDTOs;
     }
 
-    public OrderDetailEntity updateOrderStatus(OrderDetailEntity orderDetailEntity){
-              return orderDetailRepository.save(orderDetailEntity);
+    public OrderDetailEntity updateOrderStatus(OrderDetailEntity orderDetailEntity) {
+        return orderDetailRepository.save(orderDetailEntity);
     }
 
-    public List<UserEntity> getusers(){
+    public List<UserEntity> getusers() {
         return userRepo.findAll();
     }
 
-    public UserEntity saveUser(UserEntity user){
+    public UserEntity saveUser(UserEntity user) {
         String pass = new BCryptPasswordEncoder().encode(user.getPassword());
         user.setPassword(pass);
         return userRepo.save(user);
@@ -182,7 +161,7 @@ public class CustomerService {
         String usenamePassword = new String(actualByte);
         String username = usenamePassword.substring(0, usenamePassword.indexOf(":"));
         String password = usenamePassword.substring(usenamePassword.indexOf(":") + 1);
-        return userRepo.findByUserName(username).orElseThrow(()->new CustomerException("User Not Found."));
+        return userRepo.findByUserName(username).orElseThrow(() -> new CustomerException("User Not Found."));
     }
 
 }
