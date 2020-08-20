@@ -2,10 +2,10 @@ package com.spares.customer.service;
 
 import com.spares.customer.DealerServiceProxy;
 import com.spares.customer.entity.ProductEntity;
-import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -15,7 +15,7 @@ public class CustomerFallBack implements DealerServiceProxy {
 
     @Override
     public List<ProductEntity> findAllProduct() {
-        return null;
+        return new ArrayList<>();
     }
 
     @Override

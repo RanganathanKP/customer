@@ -28,16 +28,15 @@ public class CustomerController {
 
     @PostMapping("/createorder")
     @ResponseBody
-    public ResponseEntity<OrderEntity> saveproduct(@RequestBody List<PurchaseOrderDTO> purchaseOrder, @RequestHeader String Authorization) {
-        System.out.println("inside createorder");
-        OrderEntity createdOrder = customerService.createorder(purchaseOrder, Authorization);
+    public ResponseEntity<OrderEntity> saveproduct(@RequestBody List<PurchaseOrderDTO> purchaseOrder, @RequestHeader String authorization) {
+        OrderEntity createdOrder = customerService.createorder(purchaseOrder, authorization);
         return new ResponseEntity<>(createdOrder, HttpStatus.OK);
     }
 
     @PostMapping("/rateorder")
     @ResponseBody
-    public ResponseEntity<List<RatingEntity>> saveRating(@RequestBody List<RatingDTO> rating, @RequestHeader String Authorization) {
-        List<RatingEntity> response = customerService.saveRating(rating, Authorization);
+    public ResponseEntity<List<RatingEntity>> saveRating(@RequestBody List<RatingDTO> rating, @RequestHeader String authorization) {
+        List<RatingEntity> response = customerService.saveRating(rating, authorization);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -60,8 +59,8 @@ public class CustomerController {
     //View order that is created
     @GetMapping("/getorder/{orderid}")
     @ResponseBody
-    public ResponseEntity<OrderEntity> getOrderByOrderID(@PathVariable Integer orderid, @RequestHeader String Authorization) {
-        OrderEntity responseOrder = customerService.viewOrder(orderid, Authorization);
+    public ResponseEntity<OrderEntity> getOrderByOrderID(@PathVariable Integer orderid, @RequestHeader String authorization) {
+        OrderEntity responseOrder = customerService.viewOrder(orderid, authorization);
         return new ResponseEntity<>(responseOrder, HttpStatus.OK);
     }
 
@@ -69,7 +68,6 @@ public class CustomerController {
     @GetMapping("/allRating")
     @ResponseBody
     public ResponseEntity<List<RatingDTO>> getAllRating() {
-        System.out.println("Inside Rating");
         List<RatingDTO> response = customerService.viewallRating();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -77,16 +75,14 @@ public class CustomerController {
     @GetMapping("/getAllUser")
     @ResponseBody
     public List<UserEntity> findAllUser() {
-        List<UserEntity> response = customerService.getusers();
-        return response;
+        return  customerService.getusers();
     }
 
 
     @PostMapping("/saveUser")
     @ResponseBody
     public UserEntity saveUser(@RequestBody UserEntity user) {
-        UserEntity response = customerService.saveUser(user);
-        return response;
+        return  customerService.saveUser(user);
 
     }
 

@@ -39,14 +39,21 @@ public class CustomerService {
     @Autowired
     private OrderDetailRepository orderDetailRepository;
 
+    public CustomerService(DealerServiceProxy dealerServiceProxy, OrderRepository orderRepository, UserRepository userRepo, RatingRepository ratingRepository, OrderDetailRepository orderDetailRepository) {
+        this.dealerServiceProxy = dealerServiceProxy;
+        this.orderRepository = orderRepository;
+        this.userRepo = userRepo;
+        this.ratingRepository = ratingRepository;
+        this.orderDetailRepository = orderDetailRepository;
+    }
 
     public List<ProductEntity> viewAllProduct(Integer userID) {
         List<ProductEntity> responseList = dealerServiceProxy.findAllProduct();
-        if (CollectionUtils.isEmpty(responseList) || !Optional.ofNullable(responseList).isPresent()) {
+        if (CollectionUtils.isEmpty(responseList)) {
             throw new CustomerException("Product not found");
         } else {
             if (Optional.ofNullable(userID).isPresent()) {
-                responseList = responseList.stream().filter(product -> product.getProductUserID() == userID).collect(Collectors.toList());
+                responseList = responseList.stream().filter(product -> product.getProductUserID().equals(userID) ).collect(Collectors.toList());
                 if (CollectionUtils.isEmpty(responseList)) {
                     throw new CustomerException("No product for this user");
                 }
@@ -83,7 +90,7 @@ public class CustomerService {
 
     public List<RatingEntity> saveRating(List<RatingDTO> ratingDTO, String auth) {
         UserEntity user = getLoginedInUser(auth);
-        List<RatingEntity> ratingEntity = new ArrayList();
+        List<RatingEntity> ratingEntity = new ArrayList<>();
         ratingDTO.forEach(rating -> {
             validateProduct(rating);
             RatingEntity ratingToSave = new RatingEntity();
@@ -96,16 +103,23 @@ public class CustomerService {
     }
 
     public OrderEntity viewOrder(Integer orderID, String auth) {
+
         UserEntity user = getLoginedInUser(auth);
         Optional<OrderEntity> responseorder = orderRepository.findById(orderID);
         if (responseorder.isPresent()) {
-            OrderEntity order = responseorder.get();
-            if (order.getUserid() == user.getUserId() || !user.getUserRole().equalsIgnoreCase("Customer")) {
-                return order;
-            } else {
-                throw new CustomerException("Order does not belong to user.");
+            Integer orderid=responseorder.get().getOrderId();
+            if(Optional.ofNullable(orderid).isPresent()) {
+                OrderEntity order = responseorder.get();
+                if ((order.getUserid().equals(user.getUserId())  || !user.getUserRole().equalsIgnoreCase("Customer"))) {
+                    return order;
+                } else {
+                    throw new CustomerException("Order does not belong to user.");
+                }
+            }else{
+                throw new CustomerException("Please Enter Valid Order ID.");
+
             }
-        } else {
+            } else {
             throw new CustomerException("Please Enter Valid Order ID.");
         }
     }
@@ -122,7 +136,12 @@ public class CustomerService {
     }
 
     public OrderDetailEntity getorderdetail(Integer orderDetailID) {
-        return orderDetailRepository.findById(orderDetailID).get();
+        Optional<OrderDetailEntity> response = orderDetailRepository.findById(orderDetailID);
+        if(response.isPresent()){
+            return response.get();
+        }else {
+            throw new CustomerException("Order detail not found.");
+        }
     }
 
     public List<RatingDTO> viewallRating() {
@@ -155,13 +174,17 @@ public class CustomerService {
         return userRepo.save(user);
     }
 
-    private UserEntity getLoginedInUser(String authorization) {
+    public UserEntity getLoginedInUser(String authorization) {
         String encodedPass = authorization.substring("Basic".length()).trim();
         byte[] actualByte = Base64.getDecoder().decode(encodedPass);
         String usenamePassword = new String(actualByte);
         String username = usenamePassword.substring(0, usenamePassword.indexOf(":"));
-        String password = usenamePassword.substring(usenamePassword.indexOf(":") + 1);
-        return userRepo.findByUserName(username).orElseThrow(() -> new CustomerException("User Not Found."));
+        Optional<UserEntity> response = userRepo.findByUserName(username);
+        if(response.isPresent()){
+            return response.get();
+        }else{
+            throw new CustomerException("user not found.");
+        }
     }
 
 }
