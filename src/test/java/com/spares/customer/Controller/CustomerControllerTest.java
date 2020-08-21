@@ -35,14 +35,7 @@ public class CustomerControllerTest {
     private CustomerController customerController;
 
     
-    @Test
-    public void viewAllProductTest(){
-        List<ProductEntity> list= getprods();
-        ResponseEntity<List<ProductEntity>> response = new ResponseEntity<>(list, HttpStatus.OK);
-        when(customerService.viewAllProduct(any())).thenReturn(list);
-        ResponseEntity<List<ProductEntity>> serviceResponse = customerController.viewAllProduct(1);
-        assertEquals(1,serviceResponse.getBody().get(0).getProductId());
-    }
+
 
     @Test
     public void saveproductTest(){

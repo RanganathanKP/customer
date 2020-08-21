@@ -33,11 +33,11 @@
 			**/DTO/**/*,
 			**/properties/**/*,
 			**/exception/**/*,
-			**/*CustomerApplication.java,
+			**/*CustomerFallBack.java,
 			**/*ControllerAdvisor.java,
 			**/*ServletInitializer.java,
+			**/*CustomerApplication.java,
 			**/*MyUserDetailsService.java,
-			**/*CustomerFallBack.java,
 		</sonar.exclusions>
 	</properties>
 
